@@ -1,0 +1,40 @@
+//npx prisma migrate dev --name "description"
+//npx prisma generate
+//npx prisma migrate status
+//npx prisma migrate deploy
+//npx prisma format
+//npx prisma migrate reset
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Worker {
+  id        Int      @id @default(autoincrement())
+  dni       String   @unique
+  name      String
+  lastName  String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workTimes WorkTime[]
+}
+
+model WorkTime {
+  id       Int    @id @default(autoincrement())
+  workerId Int
+  worker   Worker @relation(fields: [workerId], references: [id])
+  date     DateTime
+  clockIn  DateTime
+  clockOut DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workerId, clockIn])
+}
