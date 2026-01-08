@@ -1,3 +1,4 @@
+import { findWorkerByDni } from "@/lib/workers/workers.function";
 import {
   createWorkerTime,
   getAllWorkersTime,
@@ -18,8 +19,13 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { workerId, clockIn, clockOut } = body;
-
+    const { workerId, clockIn, clockOut, dni } = body;
+    const getDni = await findWorkerByDni(dni);
+    if (!getDni)
+      return NextResponse.json(
+        { message: "DNI no encontrado" },
+        { status: 404 }
+      );
     if (!workerId || !clockIn || !clockOut) {
       return NextResponse.json(
         { message: "Faltan datos obligatorios" },
