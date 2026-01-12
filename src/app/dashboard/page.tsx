@@ -1,21 +1,22 @@
 "use client";
 
+import { registerWorkTime } from "@/services/workTime.service";
 import { TextField, Button, Stack, Paper, Alert } from "@mui/material";
 import React from "react";
 
 export default function DashboardPage() {
   const [dni, setDni] = React.useState("");
+  const [date, setDate] = React.useState("");
   const [startTime, setStartTime] = React.useState("");
   const [endTime, setEndTime] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
+  const [success, setSuccess] = React.useState<string | null>(null);
 
-  // Handler central del formulario.
-  // onSubmit es el punto único donde se validará y, más adelante,
-  // se hará el fetch al backend.
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     // Evita el comportamiento por defecto del navegador (recargar la página)
     e.preventDefault();
-    if (!dni || !startTime || !endTime) {
+
+    if (!dni || !date || !startTime || !endTime) {
       setError("Por favor, rellena todos los campos.");
       return;
     }
@@ -23,11 +24,23 @@ export default function DashboardPage() {
       setError("La hora de salida debe ser posterior a la de entrada.");
       return;
     }
+    // Limpiamos mensajes previos
     setError(null);
+    setSuccess(null);
+    try {
+      await registerWorkTime({
+        dni,
+        date,
+        clockIn: startTime,
+        clockOut: endTime,
+      });
 
-    // De momento solo mostramos los datos para comprobar que
-    // el estado se actualiza correctamente.
-    console.log({ dni, startTime, endTime });
+      setSuccess("Jornada registrada correctamente");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "Error al registrar la jornada"
+      );
+    }
   };
 
   return (
@@ -42,6 +55,13 @@ export default function DashboardPage() {
           fullWidth
           onChange={(e) => setDni(e.target.value)}
         />
+        <TextField
+          label="Fecha"
+          type="date"
+          InputLabelProps={{ shrink: true }}
+          fullWidth
+          onChange={(e) => setDate(e.target.value)}
+        />
 
         {/* Hora de entrada.
             type="time" usa el input nativo del navegador.
@@ -50,20 +70,22 @@ export default function DashboardPage() {
           label="Hora de entrada"
           type="time"
           InputLabelProps={{ shrink: true }}
+          inputProps={{ step: 60 }}
           fullWidth
           onChange={(e) => setStartTime(e.target.value)}
         />
 
-        {/* Hora de salida.
-            Más adelante se validará que sea mayor que la hora de entrada */}
         <TextField
           label="Hora de salida"
           type="time"
           InputLabelProps={{ shrink: true }}
+          inputProps={{ step: 60 }}
           fullWidth
           onChange={(e) => setEndTime(e.target.value)}
         />
+
         {error && <Alert severity="error">{error}</Alert>}
+        {success && <Alert severity="success">{success}</Alert>}
 
         <Button variant="contained" type="submit" size="large" fullWidth>
           Registrar jornada

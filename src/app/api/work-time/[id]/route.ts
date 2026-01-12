@@ -1,14 +1,11 @@
 import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
 import { NextResponse } from "next/server";
 
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: Request, context: { params: { id: string } }) {
   try {
     const body = await req.json();
     const { date, clockIn, clockOut } = body;
-    const id = parseInt(params.id, 10);
+    const id = parseInt(context.params.id, 10);
     if (!date && !clockIn && !clockOut) {
       return NextResponse.json(
         {

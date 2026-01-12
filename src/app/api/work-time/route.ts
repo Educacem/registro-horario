@@ -1,6 +1,8 @@
 import { findWorkerByDni } from "@/lib/workers/workers.function";
 import {
   createWorkerTime,
+  findDuplicateWorkEndTimeExact,
+  findDuplicateWorkStartTimeExact,
   getAllWorkersTime,
 } from "@/lib/workTime/workTime.functions";
 import { NextResponse } from "next/server";
@@ -19,23 +21,62 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { workerId, clockIn, clockOut, dni } = body;
-    const getDni = await findWorkerByDni(dni);
-    if (!getDni)
-      return NextResponse.json(
-        { message: "DNI no encontrado" },
-        { status: 404 }
-      );
-    if (!workerId || !clockIn || !clockOut) {
+    const { date, clockIn, clockOut, dni } = body;
+    const baseDate = new Date(date);
+
+    if (isNaN(baseDate.getTime())) {
+      return NextResponse.json({ message: "Fecha inválida" }, { status: 400 });
+    }
+    if (!date || !dni || !clockIn || !clockOut) {
       return NextResponse.json(
         { message: "Faltan datos obligatorios" },
         { status: 400 }
       );
     }
+
+    const worker = await findWorkerByDni(dni);
+    if (!worker)
+      return NextResponse.json(
+        { message: "DNI no encontrado" },
+        { status: 404 }
+      );
+    const [inHour, inMinute] = clockIn.split(":").map(Number);
+
+    const [outHour, outMinute] = clockOut.split(":").map(Number);
+
+    const clockInDate = new Date(baseDate);
+    clockInDate.setHours(inHour, inMinute, 0, 0);
+
+    const clockOutDate = new Date(baseDate);
+    clockOutDate.setHours(outHour, outMinute, 0, 0);
+
+    const duplicateStartTime = await findDuplicateWorkStartTimeExact(
+      worker.id,
+      clockInDate
+    );
+
+    if (duplicateStartTime) {
+      return NextResponse.json(
+        { message: "Ya existe una jornada registrada con esa hora de entrada" },
+        { status: 409 }
+      );
+    }
+    const duplicateEndTime = await findDuplicateWorkEndTimeExact(
+      worker.id,
+      clockOutDate
+    );
+    if (duplicateEndTime) {
+      return NextResponse.json(
+        { message: "Ya existe una jornada registrada con esa hora de salida" },
+        { status: 409 }
+      );
+    }
+
     const newWorkerTime = await createWorkerTime({
-      workerId,
-      clockIn,
-      clockOut,
+      workerId: worker.id,
+      date: baseDate,
+      clockIn: clockInDate,
+      clockOut: clockOutDate,
     });
     return NextResponse.json(newWorkerTime, { status: 201 });
   } catch (error: unknown) {
