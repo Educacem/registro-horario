@@ -1,15 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
-import { getWorkerById, softDeleteWorker, updateWorker } from "@/lib/workers/workers.function";
+import {
+  getWorkerById,
+  softDeleteWorker,
+  updateWorker,
+} from "@/lib/workers/workers.function";
+
+type RouteContext = {
+  params: Promise<{ id: string }>;
+};
 
 // PUT /api/workers/:id
-export async function PUT(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(req: NextRequest, context: RouteContext) {
   try {
-    const workerId = Number(params.id);
-    if (isNaN(workerId)) {
+    const { id } = await context.params;
+    const workerId = Number(id);
+
+    if (Number.isNaN(workerId)) {
       return NextResponse.json({ error: "Invalid worker id" }, { status: 400 });
     }
 
@@ -21,13 +28,12 @@ export async function PUT(
     }
 
     const existingWorker = await getWorkerById(workerId);
-
     if (!existingWorker) {
       return NextResponse.json({ error: "Worker not found" }, { status: 404 });
     }
 
     const updated = await updateWorker(workerId, body);
-    return NextResponse.json(updated);
+    return NextResponse.json(updated, { status: 200 });
   } catch (error: unknown) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -46,26 +52,23 @@ export async function PUT(
 }
 
 // DELETE /api/workers/:id
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(req: NextRequest, context: RouteContext) {
   try {
-    const workerId = Number(params.id);
-    if (isNaN(workerId)) {
+    const { id } = await context.params;
+    const workerId = Number(id);
+
+    if (Number.isNaN(workerId)) {
       return NextResponse.json({ error: "Invalid worker id" }, { status: 400 });
     }
 
     const existingWorker = await getWorkerById(workerId);
-
     if (!existingWorker) {
       return NextResponse.json({ error: "Worker not found" }, { status: 404 });
     }
 
     const deleted = await softDeleteWorker(workerId);
-
-    return NextResponse.json(deleted);
-  } catch (error) {
+    return NextResponse.json(deleted, { status: 200 });
+  } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Error deleting worker";
     return NextResponse.json({ error: message }, { status: 500 });

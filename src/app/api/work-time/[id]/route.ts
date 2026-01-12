@@ -41,15 +41,23 @@ export async function PUT(
 }
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const id = parseInt(params.id, 10);
+    const { id } = await context.params;
+    const parsedId = Number(id);
+
+    if (Number.isNaN(parsedId)) {
+      return NextResponse.json({ message: "Invalid id" }, { status: 400 });
+    }
+
     const { deleteWorkerTime } = await import(
       "@/lib/workTime/workTime.functions"
     );
-    await deleteWorkerTime(id);
+
+    await deleteWorkerTime(parsedId);
+
     return NextResponse.json(
       { message: "Work time deleted successfully" },
       { status: 200 }
