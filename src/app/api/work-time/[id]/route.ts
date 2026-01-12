@@ -1,11 +1,19 @@
 import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function PUT(req: Request, context: { params: { id: string } }) {
+type RouteContext = {
+  params: {
+    id: string;
+  };
+};
+
+export async function PUT(req: NextRequest, context: RouteContext) {
   try {
     const body = await req.json();
     const { date, clockIn, clockOut } = body;
-    const id = parseInt(context.params.id, 10);
+
+    const id = Number(context.params.id);
+
     if (!date && !clockIn && !clockOut) {
       return NextResponse.json(
         {
@@ -15,15 +23,18 @@ export async function PUT(req: Request, context: { params: { id: string } }) {
         { status: 400 }
       );
     }
+
     const updatedWorkerTime = await updateWorkerTime(id, {
       date: date ? new Date(date) : undefined,
       clockIn: clockIn ? new Date(clockIn) : undefined,
       clockOut: clockOut ? new Date(clockOut) : undefined,
     });
+
     return NextResponse.json(updatedWorkerTime, { status: 200 });
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Error updating work time";
+
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
