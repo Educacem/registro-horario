@@ -1,18 +1,20 @@
 import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
 import { NextRequest, NextResponse } from "next/server";
 
-type RouteContext = {
-  params: {
-    id: string;
-  };
-};
-
-export async function PUT(req: NextRequest, context: RouteContext) {
+export async function PUT(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await context.params;
+    const workerTimeId = Number(id);
+
+    if (Number.isNaN(workerTimeId)) {
+      return NextResponse.json({ message: "Invalid id" }, { status: 400 });
+    }
+
     const body = await req.json();
     const { date, clockIn, clockOut } = body;
-
-    const id = Number(context.params.id);
 
     if (!date && !clockIn && !clockOut) {
       return NextResponse.json(
@@ -24,7 +26,7 @@ export async function PUT(req: NextRequest, context: RouteContext) {
       );
     }
 
-    const updatedWorkerTime = await updateWorkerTime(id, {
+    const updatedWorkerTime = await updateWorkerTime(workerTimeId, {
       date: date ? new Date(date) : undefined,
       clockIn: clockIn ? new Date(clockIn) : undefined,
       clockOut: clockOut ? new Date(clockOut) : undefined,
@@ -34,7 +36,6 @@ export async function PUT(req: NextRequest, context: RouteContext) {
   } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Error updating work time";
-
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
