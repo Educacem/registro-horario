@@ -1,22 +1,31 @@
-import checkApiKey from "@/helper/functions";
-import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
+// src/app/api/work-time/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import checkApiKey from "@/helper/functions";
+import {
+  updateWorkerTime,
+  deleteWorkerTime,
+} from "@/lib/workTime/workTime.functions";
 
-export async function PUT(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+type RouteContext = {
+  params: { id: string };
+};
+
+export async function PUT(req: NextRequest, { params }: RouteContext) {
+  const auth = checkApiKey(req);
+  if (auth) return auth;
+
   try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
-    const { id } = await context.params;
-    const workerTimeId = Number(id);
-
+    const workerTimeId = Number(params.id);
     if (Number.isNaN(workerTimeId)) {
       return NextResponse.json({ message: "Invalid id" }, { status: 400 });
     }
 
-    const body = await req.json();
+    const body = (await req.json()) as Partial<{
+      date: string;
+      clockIn: string;
+      clockOut: string;
+    }>;
+
     const { date, clockIn, clockOut } = body;
 
     if (!date && !clockIn && !clockOut) {
@@ -43,22 +52,15 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
-    const { id } = await context.params;
-    const parsedId = Number(id);
+export async function DELETE(req: NextRequest, { params }: RouteContext) {
+  const auth = checkApiKey(req);
+  if (auth) return auth;
 
+  try {
+    const parsedId = Number(params.id);
     if (Number.isNaN(parsedId)) {
       return NextResponse.json({ message: "Invalid id" }, { status: 400 });
     }
-
-    const { deleteWorkerTime } =
-      await import("@/lib/workTime/workTime.functions");
 
     await deleteWorkerTime(parsedId);
 
