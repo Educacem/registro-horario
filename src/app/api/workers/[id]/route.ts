@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+/* import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import {
   getWorkerById,
@@ -74,3 +74,4 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+ */

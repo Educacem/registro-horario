@@ -1,4 +1,4 @@
-import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
+/* import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
@@ -68,3 +68,4 @@ export async function DELETE(
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+ */

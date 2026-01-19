@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { createWorker, getAllWorkers } from "@/lib/workers/workers.function";
+import { createWorker } from "@/lib/workers/workers.function";
 
-// GET /api/workers
+/* // GET /api/workers
 export async function GET() {
   try {
     const workers = await getAllWorkers();
@@ -11,7 +11,7 @@ export async function GET() {
       error instanceof Error ? error.message : "Error fetching workers";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+} */
 // POST /api/workers
 export async function POST(req: Request) {
   try {

@@ -3,11 +3,10 @@ import {
   createWorkerTime,
   findDuplicateWorkEndTimeExact,
   findDuplicateWorkStartTimeExact,
-  getAllWorkersTime,
 } from "@/lib/workTime/workTime.functions";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+/* export async function GET() {
   try {
     const workersTime = await getAllWorkersTime();
     return NextResponse.json(workersTime, { status: 200 });
@@ -16,7 +15,7 @@ export async function GET() {
       error instanceof Error ? error.message : "Error fetching work times";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
+} */
 
 export async function POST(req: Request) {
   try {
