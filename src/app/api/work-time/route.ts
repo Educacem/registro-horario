@@ -1,13 +1,17 @@
+import checkApiKey from "@/helper/functions";
 import { findWorkerByDni } from "@/lib/workers/workers.function";
 import {
   createWorkerTime,
   findDuplicateWorkEndTimeExact,
   findDuplicateWorkStartTimeExact,
+  getAllWorkersTime,
 } from "@/lib/workTime/workTime.functions";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-/* export async function GET() {
+export async function GET(req: NextRequest) {
   try {
+    const auth = checkApiKey(req);
+    if (auth) return auth;
     const workersTime = await getAllWorkersTime();
     return NextResponse.json(workersTime, { status: 200 });
   } catch (error: unknown) {
@@ -15,7 +19,7 @@ import { NextResponse } from "next/server";
       error instanceof Error ? error.message : "Error fetching work times";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-} */
+}
 
 export async function POST(req: Request) {
   try {

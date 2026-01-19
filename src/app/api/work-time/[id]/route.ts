@@ -1,4 +1,5 @@
-/* import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
+import checkApiKey from "@/helper/functions";
+import { updateWorkerTime } from "@/lib/workTime/workTime.functions";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(
@@ -6,6 +7,8 @@ export async function PUT(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = checkApiKey(req);
+    if (auth) return auth;
     const { id } = await context.params;
     const workerTimeId = Number(id);
 
@@ -45,6 +48,8 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = checkApiKey(req);
+    if (auth) return auth;
     const { id } = await context.params;
     const parsedId = Number(id);
 
@@ -52,9 +57,8 @@ export async function DELETE(
       return NextResponse.json({ message: "Invalid id" }, { status: 400 });
     }
 
-    const { deleteWorkerTime } = await import(
-      "@/lib/workTime/workTime.functions"
-    );
+    const { deleteWorkerTime } =
+      await import("@/lib/workTime/workTime.functions");
 
     await deleteWorkerTime(parsedId);
 
@@ -68,4 +72,3 @@ export async function DELETE(
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
- */

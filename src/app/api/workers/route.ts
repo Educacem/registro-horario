@@ -1,9 +1,12 @@
-import { NextResponse } from "next/server";
-import { createWorker } from "@/lib/workers/workers.function";
+import { NextResponse, NextRequest } from "next/server";
+import { createWorker, getAllWorkers } from "@/lib/workers/workers.function";
+import checkApiKey from "@/helper/functions";
 
-/* // GET /api/workers
-export async function GET() {
+// GET /api/workers
+export async function GET(req: NextRequest) {
   try {
+    const auth = checkApiKey(req);
+    if (auth) return auth;
     const workers = await getAllWorkers();
     return NextResponse.json(workers, { status: 200 });
   } catch (error: unknown) {
@@ -11,7 +14,7 @@ export async function GET() {
       error instanceof Error ? error.message : "Error fetching workers";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-} */
+}
 // POST /api/workers
 export async function POST(req: Request) {
   try {

@@ -1,10 +1,11 @@
-/* import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import {
   getWorkerById,
   softDeleteWorker,
   updateWorker,
 } from "@/lib/workers/workers.function";
+import checkApiKey from "@/helper/functions";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -13,6 +14,8 @@ type RouteContext = {
 // PUT /api/workers/:id
 export async function PUT(req: NextRequest, context: RouteContext) {
   try {
+    const auth = checkApiKey(req);
+    if (auth) return auth;
     const { id } = await context.params;
     const workerId = Number(id);
 
@@ -54,6 +57,8 @@ export async function PUT(req: NextRequest, context: RouteContext) {
 // DELETE /api/workers/:id
 export async function DELETE(req: NextRequest, context: RouteContext) {
   try {
+    const auth = checkApiKey(req);
+    if (auth) return auth;
     const { id } = await context.params;
     const workerId = Number(id);
 
@@ -74,4 +79,3 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
- */
