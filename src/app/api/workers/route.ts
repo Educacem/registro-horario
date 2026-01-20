@@ -16,15 +16,17 @@ export async function GET(req: NextRequest) {
   }
 }
 // POST /api/workers
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    const auth = checkApiKey(req);
+    if (auth) return auth;
     const body = await req.json();
     const { dni, name, lastName } = body;
 
     if (!name || !dni || !lastName) {
       return NextResponse.json(
         { message: "Faltan datos obligatorios" },
-        { status: 400 }
+        { status: 400 },
       );
     }
     const newWorker = await createWorker({ dni, name, lastName });
