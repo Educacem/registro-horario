@@ -1,0 +1,36 @@
+{
+  "Version": "2008-10-17",
+  "Statement": [
+    {
+      "Sid": "LambdaECRImageRetrievalPolicy",
+      "Effect": "Allow",
+      "Principal": { "Service": "lambda.amazonaws.com" },
+      "Action": [
+        "ecr:BatchGetImage",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:SetRepositoryPolicy",
+        "ecr:DeleteRepositoryPolicy",
+        "ecr:GetRepositoryPolicy"
+      ],
+      "Condition": {
+        "StringLike": {
+          "aws:sourceArn": "arn:aws:lambda:eu-north-1:083264029541:function:*"
+        }
+      }
+    },
+    {
+      "Sid": "AllowPushFromTimplyEcrPublisher",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::083264029541:user/timply-ecr-publisher"
+      },
+      "Action": [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload",
+        "ecr:PutImage"
+      ]
+    }
+  ]
+}
