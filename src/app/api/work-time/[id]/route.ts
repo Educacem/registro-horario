@@ -5,17 +5,17 @@ import {
   updateWorkerTime,
   deleteWorkerTime,
 } from "@/lib/workTime/workTime.functions";
+type ParamsPromise = { params: Promise<{ id: string }> };
 
-export async function PUT(
-  req: NextRequest,
-  ctx: RouteContext<"/api/work-time/[id]">,
-) {
+export async function PUT(req: NextRequest, { params }: ParamsPromise) {
   const auth = checkApiKey(req);
   if (auth) return auth;
 
   try {
-    const workerTimeId = Number(ctx.params);
-    if (Number.isNaN(workerTimeId)) {
+    const { id } = await params;
+    const workerTimeId = Number(id);
+
+    if (!Number.isInteger(workerTimeId) || workerTimeId <= 0) {
       return NextResponse.json({ message: "Invalid id" }, { status: 400 });
     }
 
