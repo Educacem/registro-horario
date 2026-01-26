@@ -11,8 +11,8 @@ export default function DashboardLayout({
     <main>
       <Container maxWidth="sm">
         <Box sx={{ mt: 4 }}>
-          <Typography variant="h2" align="center" gutterBottom>
-            Timply
+          <Typography variant="h3" align="center" gutterBottom>
+            Educacem Academy
           </Typography>
           {children}
         </Box>

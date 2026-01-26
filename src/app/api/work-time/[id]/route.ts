@@ -51,15 +51,12 @@ export async function PUT(req: NextRequest, { params }: ParamsPromise) {
   }
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } },
-) {
+export async function DELETE(req: NextRequest, { params }: ParamsPromise) {
   const auth = checkApiKey(req);
   if (auth) return auth;
 
   try {
-    const parsedId = Number(params.id);
+    const parsedId = Number((await params).id);
     if (Number.isNaN(parsedId)) {
       return NextResponse.json({ message: "Invalid id" }, { status: 400 });
     }
