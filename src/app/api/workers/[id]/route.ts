@@ -19,14 +19,19 @@ export async function PUT(req: NextRequest, context: RouteContext) {
     const { id } = await context.params;
     const workerId = Number(id);
 
+    if (!workerId) {
+      return NextResponse.json(
+        { error: "Worker id is required" },
+        { status: 400 },
+      );
+    }
     if (Number.isNaN(workerId)) {
       return NextResponse.json({ error: "Invalid worker id" }, { status: 400 });
     }
 
     const body = await req.json();
-    const { dni, name, lastName } = body;
-
-    if (!dni && !name && !lastName) {
+    const { dni, name, lastName, companyId } = body;
+    if (!dni && !name && !lastName && !companyId) {
       return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
     }
 
@@ -44,7 +49,7 @@ export async function PUT(req: NextRequest, context: RouteContext) {
     ) {
       return NextResponse.json(
         { error: "DNI already exists" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -61,6 +66,12 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
     if (auth) return auth;
     const { id } = await context.params;
     const workerId = Number(id);
+    if (!workerId) {
+      return NextResponse.json(
+        { error: "Worker id is required" },
+        { status: 400 },
+      );
+    }
 
     if (Number.isNaN(workerId)) {
       return NextResponse.json({ error: "Invalid worker id" }, { status: 400 });

@@ -14,20 +14,21 @@ datasource db {
 }
 
 model Worker {
-  id        Int      @id @default(autoincrement())
-  dni       String   @unique
+  id        Int        @id @default(autoincrement())
+  dni       String     @unique
   name      String
   lastName  String
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-
+  active    Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  companyId Int?
+  company   Company?    @relation(fields: [companyId], references: [id])
   workTimes WorkTime[]
 }
 
 model WorkTime {
-  id       Int    @id @default(autoincrement())
+  id       Int      @id @default(autoincrement())
   workerId Int
-  worker   Worker @relation(fields: [workerId], references: [id])
+  worker   Worker   @relation(fields: [workerId], references: [id])
   date     DateTime
   clockIn  DateTime
   clockOut DateTime
@@ -35,4 +36,12 @@ model WorkTime {
   createdAt DateTime @default(now())
 
   @@index([workerId, clockIn])
+}
+
+model Company {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  workers Worker[]
 }
