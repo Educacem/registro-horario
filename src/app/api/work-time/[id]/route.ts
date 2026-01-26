@@ -6,11 +6,10 @@ import {
   deleteWorkerTime,
 } from "@/lib/workTime/workTime.functions";
 
-type RouteContext = {
-  params: { id: string };
-};
-
-export async function PUT(req: NextRequest, { params }: RouteContext) {
+export async function PUT(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const auth = checkApiKey(req);
   if (auth) return auth;
 
@@ -34,7 +33,7 @@ export async function PUT(req: NextRequest, { params }: RouteContext) {
           message:
             "At least one field (date, clockIn, clockOut) must be provided",
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -52,7 +51,10 @@ export async function PUT(req: NextRequest, { params }: RouteContext) {
   }
 }
 
-export async function DELETE(req: NextRequest, { params }: RouteContext) {
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
   const auth = checkApiKey(req);
   if (auth) return auth;
 
@@ -66,7 +68,7 @@ export async function DELETE(req: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json(
       { message: "Work time deleted successfully" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error: unknown) {
     const message =
