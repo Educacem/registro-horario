@@ -8,13 +8,13 @@ import {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  ctx: RouteContext<"/api/work-time/[id]">,
 ) {
   const auth = checkApiKey(req);
   if (auth) return auth;
 
   try {
-    const workerTimeId = Number(params.id);
+    const workerTimeId = Number(ctx.params);
     if (Number.isNaN(workerTimeId)) {
       return NextResponse.json({ message: "Invalid id" }, { status: 400 });
     }
