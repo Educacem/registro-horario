@@ -11,7 +11,12 @@ export default function DashboardLayout({
     <main>
       <Container maxWidth="sm">
         <Box sx={{ mt: 4 }}>
-          <Typography variant="h3" align="center" gutterBottom>
+          <Typography
+            variant="h3"
+            fontWeight={"100"}
+            align="center"
+            gutterBottom
+          >
             Educacem Academy
           </Typography>
           {children}
