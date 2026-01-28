@@ -1,11 +1,11 @@
-import checkApiKey from "@/helper/functions";
-import { findWorkerByDni } from "@/lib/workers/workers.function";
+import checkApiKey from "@/helper/functions/functions";
+import { findWorkerByDni } from "@/lib/workers/workers.services";
 import {
   createWorkerTime,
   findDuplicateWorkEndTimeExact,
   findDuplicateWorkStartTimeExact,
   getAllWorkersTime,
-} from "@/lib/workTime/workTime.functions";
+} from "@/lib/workTime/workTime.services";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     if (!date || !dni || !clockIn || !clockOut) {
       return NextResponse.json(
         { message: "Faltan datos obligatorios" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     if (!worker)
       return NextResponse.json(
         { message: "DNI no encontrado" },
-        { status: 404 }
+        { status: 404 },
       );
     const [inHour, inMinute] = clockIn.split(":").map(Number);
 
@@ -55,23 +55,23 @@ export async function POST(req: Request) {
 
     const duplicateStartTime = await findDuplicateWorkStartTimeExact(
       worker.id,
-      clockInDate
+      clockInDate,
     );
 
     if (duplicateStartTime) {
       return NextResponse.json(
         { message: "Ya existe una jornada registrada con esa hora de entrada" },
-        { status: 409 }
+        { status: 409 },
       );
     }
     const duplicateEndTime = await findDuplicateWorkEndTimeExact(
       worker.id,
-      clockOutDate
+      clockOutDate,
     );
     if (duplicateEndTime) {
       return NextResponse.json(
         { message: "Ya existe una jornada registrada con esa hora de salida" },
-        { status: 409 }
+        { status: 409 },
       );
     }
 

@@ -80,3 +80,13 @@ export async function findWorkerTimeByWorkerId(workerId: number) {
     },
   });
 }
+
+export async function findWorkdTimesByCompanyId(companyId: number) {
+  return prisma.workTime.findMany({
+    where: {
+      worker: {
+        companyId,
+      },
+    },
+  });
+}

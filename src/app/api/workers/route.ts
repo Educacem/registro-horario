@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { createWorker, getAllWorkers } from "@/lib/workers/workers.function";
-import checkApiKey from "@/helper/functions";
+import { createWorker, getAllWorkers } from "@/lib/workers/workers.services";
+import checkApiKey from "@/helper/functions/functions";
 
 // GET /api/workers
 export async function GET(req: NextRequest) {

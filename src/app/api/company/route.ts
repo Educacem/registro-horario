@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import checkApiKey from "@/helper/functions";
-import { createCompany, getAllCompanys } from "@/lib/company/company.function";
+import checkApiKey from "@/helper/functions/functions";
+import { createCompany, getAllCompanys } from "@/lib/company/company.services";
 
 // GET /api/company
 export async function GET(req: NextRequest) {
@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 
 //Post /api/company
 export async function POST(req: NextRequest) {
-    try {
+  try {
     const auth = checkApiKey(req);
     if (auth) return auth;
     const body = await req.json();
@@ -27,13 +27,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { message: "Faltan datos obligatorios" },
         { status: 400 },
-        );
+      );
     }
     const newCompany = await createCompany({ name });
     return NextResponse.json(newCompany, { status: 201 });
-}catch (error: unknown) {
+  } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Error creating company";
     return NextResponse.json({ error: message }, { status: 500 });
-  } 
+  }
 }

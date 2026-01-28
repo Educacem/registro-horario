@@ -1,9 +1,9 @@
-import checkApiKey from "@/helper/functions";
+import checkApiKey from "@/helper/functions/functions";
 import {
   updateCompany,
   deleteCompany,
   getCompanyById,
-} from "@/lib/company/company.function";
+} from "@/lib/company/company.services";
 import { NextRequest, NextResponse } from "next/server";
 
 type RouteContext = {

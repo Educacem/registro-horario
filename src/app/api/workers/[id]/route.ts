@@ -4,8 +4,8 @@ import {
   getWorkerById,
   softDeleteWorker,
   updateWorker,
-} from "@/lib/workers/workers.function";
-import checkApiKey from "@/helper/functions";
+} from "@/lib/workers/workers.services";
+import checkApiKey from "@/helper/functions/functions";
 
 type RouteContext = {
   params: Promise<{ id: string }>;

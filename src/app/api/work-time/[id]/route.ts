@@ -1,10 +1,10 @@
 // src/app/api/work-time/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import checkApiKey from "@/helper/functions";
+import checkApiKey from "@/helper/functions/functions";
 import {
   updateWorkerTime,
   deleteWorkerTime,
-} from "@/lib/workTime/workTime.functions";
+} from "@/lib/workTime/workTime.services";
 type ParamsPromise = { params: Promise<{ id: string }> };
 
 export async function PUT(req: NextRequest, { params }: ParamsPromise) {
