@@ -32,7 +32,7 @@ export async function updateWorkerTime(
     date?: Date;
     clockIn?: Date;
     clockOut?: Date;
-  }
+  },
 ) {
   return prisma.workTime.update({
     where: { id },
@@ -52,7 +52,7 @@ export async function deleteWorkerTime(id: number) {
 
 export async function findDuplicateWorkStartTimeExact(
   workerId: number,
-  clockIn: Date
+  clockIn: Date,
 ) {
   return prisma.workTime.findFirst({
     where: {
@@ -63,12 +63,20 @@ export async function findDuplicateWorkStartTimeExact(
 }
 export async function findDuplicateWorkEndTimeExact(
   workerId: number,
-  clockOut: Date
+  clockOut: Date,
 ) {
   return prisma.workTime.findFirst({
     where: {
       workerId,
       clockOut: clockOut,
+    },
+  });
+}
+
+export async function findWorkerTimeByWorkerId(workerId: number) {
+  return prisma.workTime.findMany({
+    where: {
+      workerId,
     },
   });
 }

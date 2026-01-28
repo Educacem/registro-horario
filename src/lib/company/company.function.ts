@@ -25,3 +25,9 @@ export async function deleteCompany(id: number) {
     where: { id },
   });
 }
+
+export async function getWorkersByCompanyId(companyId: number) {
+  return prisma.worker.findMany({
+    where: { companyId },
+  });
+}
