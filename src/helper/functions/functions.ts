@@ -49,13 +49,14 @@ export function drawKeyValue(
 
 // Formatea una fecha como cadena legible en formato ES local
 export function formatDateTime(d: Date): string {
-  // Ajusta a tu preferencia: ES local
   return new Intl.DateTimeFormat("es-ES", {
+    timeZone: "UTC",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+    hour12: false,
   }).format(d);
 }
 

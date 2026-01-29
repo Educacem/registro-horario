@@ -17,19 +17,19 @@ export async function pdfDocToBuffer(doc: PDFKit.PDFDocument): Promise<Buffer> {
       totalBytes += buf.length;
 
       // 👇 logs didácticos
-      console.log(
+      /* console.log(
         `[pdf] chunk #${chunkCount} size=${buf.length} bytes total=${totalBytes}`,
-      );
+      ); */
     });
 
     doc.on("end", () => {
-      console.log(`[pdf] end: chunks=${chunkCount} totalBytes=${totalBytes}`);
-      resolve(Buffer.concat(chunks));
+      /*       console.log(`[pdf] end: chunks=${chunkCount} totalBytes=${totalBytes}`);
+       */ resolve(Buffer.concat(chunks));
     });
 
     doc.on("error", (err) => {
-      console.log("[pdf] error:", err);
-      reject(err);
+      /*       console.log("[pdf] error:", err);
+       */ reject(err);
     });
 
     doc.end();

@@ -19,9 +19,7 @@ import {
   getCompanyById,
   getWorkersByCompanyId,
 } from "@/lib/company/company.services";
-import {
-  findWorkdTimesByCompanyId,
-} from "@/lib/workTime/workTime.services";
+import { findWorkdTimesByCompanyId } from "@/lib/workTime/workTime.services";
 import {
   ReportBody,
   WorkerLike,
@@ -58,7 +56,6 @@ export async function POST(req: NextRequest) {
 
     //We need to get the company id from the context params
     const body = (await req.json()) as ReportBody;
-    console.log("Body received", body);
 
     //Parseamos el id por que no sabemos que nos estan enviando
     const companyId = parsePositiveInt(body.companyId);
@@ -68,7 +65,6 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-    console.log("Parsed to number", companyId);
 
     //Filtramos por fechas si las hay
     const from = parseOptionalDate(body.from);
@@ -79,7 +75,6 @@ export async function POST(req: NextRequest) {
 
     //Check if company exists with the companyId
     const company = await getCompanyById(companyId);
-    console.log("Company", company);
     if (!company) {
       return NextResponse.json({ error: "Company not found" }, { status: 404 });
     }
@@ -209,6 +204,7 @@ export async function POST(req: NextRequest) {
         y = ensureSpace(doc, y);
 
         const outText = wt.clockOut ? formatDateTime(wt.clockOut) : "EN CURSO";
+
         const durMs = wt.clockOut
           ? wt.clockOut.getTime() - wt.clockIn.getTime()
           : 0;
@@ -225,6 +221,7 @@ export async function POST(req: NextRequest) {
             align: "right",
           },
         ]);
+        console.log("");
       }
       y = ensureSpace(doc, y);
       doc.moveDown(0.2);
