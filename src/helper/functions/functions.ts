@@ -159,3 +159,12 @@ export function drawTableRow(
 
   return y + h;
 }
+// Parsea y valida un nombre de trabajador desde un valor desconocido
+export const parseToCorrectString = (name: unknown): string | null => {
+  if (typeof name === "string") {
+    const trimmed = name.trim();
+
+    return trimmed.length > 0 ? trimmed : null;
+  }
+  return null;
+};

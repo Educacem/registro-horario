@@ -48,7 +48,10 @@ export const runtime = "nodejs";
     },
   });
 } */
-
+type ReportCompany = {
+  companyId: number;
+  name?: string;
+};
 export async function POST(req: NextRequest) {
   try {
     const auth = checkApiKey(req);
@@ -85,24 +88,56 @@ export async function POST(req: NextRequest) {
     )) as WorkTimeLike[];
 
     // (Opcional) filtrar por rango en memoria si tu query aún no filtra.
+    // Filtra los fichajes (workTimes) por un rango de fechas opcional.
+    // - Si `from` existe: elimina los fichajes cuya entrada sea ANTES de `from`.
+    // - Si `to` existe: elimina los fichajes cuya entrada sea DESPUÉS de `to`.
+    // - Si no hay `from`/`to`, devuelve todos.
+
     const filteredWorkTimes = workTimes.filter((wt) => {
+      // Convertimos la fecha de entrada (clockIn) a milisegundos desde epoch
+      // para poder comparar fácilmente con < y >.
       const t = wt.clockIn.getTime();
+
+      // Si hay fecha mínima (`from`) y este fichaje es anterior, lo descartamos.
       if (from && t < from.getTime()) return false;
+
+      // Si hay fecha máxima (`to`) y este fichaje es posterior, lo descartamos.
       if (to && t > to.getTime()) return false;
+
+      // Si pasa los filtros, lo mantenemos.
       return true;
     });
 
-    // Agrupar fichajes por workerId
+    // Agrupa fichajes por trabajador (workerId) y ordena cada grupo por hora de entrada (clockIn).
+
+    // 1) Creamos un "diccionario" (Map) donde:
+    //    - la clave es el workerId (number)
+    //    - el valor es un array con sus WorkTimes
     const timesByWorker = new Map<number, WorkTimeLike[]>();
+
+    // 2) Recorremos todos los fichajes ya filtrados por fechas (filteredWorkTimes)
+    //    y los metemos dentro del array correspondiente a su workerId.
     for (const wt of filteredWorkTimes) {
+      // Intentamos obtener el array existente para ese workerId.
+      // Si todavía no existe, usamos un array vacío.
       const arr = timesByWorker.get(wt.workerId) ?? [];
+
+      // Añadimos este fichaje al array del trabajador.
       arr.push(wt);
+
+      // Guardamos el array (nuevo o actualizado) en el Map.
       timesByWorker.set(wt.workerId, arr);
     }
-    for (const [wid, arr] of timesByWorker) {
+
+    // 3) Para cada trabajador (cada entrada del Map),
+    //    ordenamos su lista de fichajes por fecha/hora de entrada (clockIn) ascendente.
+    for (const [workerId, arr] of timesByWorker) {
       arr.sort((a, b) => a.clockIn.getTime() - b.clockIn.getTime());
-      timesByWorker.set(wid, arr);
+
+      // (Opcional) Volvemos a setearlo, aunque NO es necesario porque `arr` ya es la misma referencia.
+      timesByWorker.set(workerId, arr);
     }
+
     // ===== Cabecera =====
     doc
       .font("Helvetica-Bold")
@@ -121,7 +156,7 @@ export async function POST(req: NextRequest) {
       drawKeyValue(
         doc,
         "Rango",
-        `${from ? formatDateOnly(from) : "—"}  →  ${to ? formatDateOnly(to) : "—"}`,
+        `${from ? formatDateOnly(from) : "—"}  a  ${to ? formatDateOnly(to) : "—"}`,
       );
     }
 
@@ -221,7 +256,6 @@ export async function POST(req: NextRequest) {
             align: "right",
           },
         ]);
-        console.log("");
       }
       y = ensureSpace(doc, y);
       doc.moveDown(0.2);

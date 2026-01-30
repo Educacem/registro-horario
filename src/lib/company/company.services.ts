@@ -31,3 +31,12 @@ export async function getWorkersByCompanyId(companyId: number) {
     where: { companyId },
   });
 }
+
+export async function getCompanyByWorkerId(workerId: number) {
+  const worker = await prisma.worker.findUnique({
+    where: { id: workerId },
+    select: { company: true },
+  });
+
+  return worker?.company ?? null;
+}

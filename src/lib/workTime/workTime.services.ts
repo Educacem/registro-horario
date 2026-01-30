@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export async function getWorkerTimeById(id: number) {
+export async function getWorkerTimeByWorkerId(id: number) {
   return prisma.workTime.findMany({
     where: { workerId: id },
   });

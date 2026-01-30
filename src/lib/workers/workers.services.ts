@@ -21,7 +21,7 @@ export async function createWorker(data: {
 
 export async function updateWorker(
   id: number,
-  data: { dni?: string; name?: string; lastName?: string }
+  data: { dni?: string; name?: string; lastName?: string },
 ) {
   return prisma.worker.update({
     where: { id },
@@ -52,5 +52,11 @@ export async function restoreWorker(id: number) {
 export async function findWorkerByDni(dni: string) {
   return prisma.worker.findUnique({
     where: { dni },
+  });
+}
+
+export async function getWorkerByName(name: string) {
+  return prisma.worker.findFirst({
+    where: { name },
   });
 }
