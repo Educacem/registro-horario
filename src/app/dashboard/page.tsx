@@ -55,6 +55,7 @@ export default function DashboardPage() {
         <TextField
           label="DNI"
           fullWidth
+          value={dni}
           onChange={(e) => setDni(e.target.value)}
         />
         <TextField
@@ -62,6 +63,7 @@ export default function DashboardPage() {
           type="date"
           InputLabelProps={{ shrink: true }}
           fullWidth
+          value={date}
           onChange={(e) => setDate(e.target.value)}
         />
 
@@ -74,6 +76,7 @@ export default function DashboardPage() {
           InputLabelProps={{ shrink: true }}
           inputProps={{ step: 60 }}
           fullWidth
+          value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
         />
 
@@ -83,6 +86,7 @@ export default function DashboardPage() {
           InputLabelProps={{ shrink: true }}
           inputProps={{ step: 60 }}
           fullWidth
+          value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
         />
 
