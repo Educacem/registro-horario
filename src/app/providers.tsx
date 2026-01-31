@@ -12,6 +12,7 @@ export default function Providers({ children }: { children: ReactNode }) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {children}
+      <link rel="icon" href="/favicon.png" />
     </ThemeProvider>
   );
 }

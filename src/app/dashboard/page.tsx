@@ -1,6 +1,6 @@
 "use client";
 
-import { registerWorkTime } from "@/services/workTime.service";
+import { registerWorkTime } from "@/servicesFront/workTime.service";
 import { TextField, Button, Stack, Paper, Alert } from "@mui/material";
 import React from "react";
 
@@ -38,7 +38,9 @@ export default function DashboardPage() {
       setSuccess("Jornada registrada correctamente");
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "Error al registrar la jornada"
+        error instanceof Error
+          ? error.message
+          : "Error al registrar la jornada",
       );
     }
   };

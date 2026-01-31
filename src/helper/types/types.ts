@@ -18,3 +18,9 @@ export type WorkTimeLike = {
   clockOut: Date | null;
   date?: Date | null;
 };
+
+export type ReportBodyByWorker = {
+  name: string;
+  from?: string | undefined;
+  to?: string | undefined;
+};

@@ -17,16 +17,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { pdfDocToBuffer } from "@/helper/pdf/pdfBuffer";
 import { getWorkerByName } from "@/lib/workers/workers.services";
 import { getCompanyByWorkerId } from "@/lib/company/company.services";
-import { WorkerLike, WorkTimeLike } from "@/helper/types/types";
 import {
-  getWorkerTimeById,
-  getWorkerTimeByWorkerId,
-} from "@/lib/workTime/workTime.services";
-type ReportBodyByWorker = {
-  name: string;
-  from?: string | undefined;
-  to?: string | undefined;
-};
+  ReportBodyByWorker,
+  WorkerLike,
+  WorkTimeLike,
+} from "@/helper/types/types";
+import { getWorkerTimeByWorkerId } from "@/lib/workTime/workTime.services";
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,7 +30,6 @@ export async function POST(req: NextRequest) {
     if (auth) return auth;
 
     const body = (await req.json()) as ReportBodyByWorker;
-    console.log("Body received in byWorker report:", body);
 
     const workerName = parseToCorrectString(body.name);
     if (!workerName) {

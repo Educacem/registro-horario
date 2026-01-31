@@ -1,6 +1,7 @@
 "use client";
-
 import Providers from "./providers";
+
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -9,7 +10,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body>
+      <body
+        style={{
+          minHeight: "100vh",
+          margin: 0,
+          backgroundImage: "linear-gradient(to top, #aabbb0, #ffffff)",
+        }}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -13,7 +13,8 @@ export default function DashboardLayout({
         <Box sx={{ mt: 4 }}>
           <Typography
             variant="h3"
-            fontWeight={"100"}
+            fontWeight={"400"}
+            fontFamily={"monospace"}
             align="center"
             gutterBottom
           >
