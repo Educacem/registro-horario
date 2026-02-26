@@ -48,10 +48,7 @@ export const runtime = "nodejs";
     },
   });
 } */
-type ReportCompany = {
-  companyId: number;
-  name?: string;
-};
+
 export async function POST(req: NextRequest) {
   try {
     const auth = checkApiKey(req);
