@@ -6,15 +6,10 @@
 export async function pdfDocToBuffer(doc: PDFKit.PDFDocument): Promise<Buffer> {
   return await new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = [];
-    let totalBytes = 0;
-    let chunkCount = 0;
 
     doc.on("data", (chunk) => {
       const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
       chunks.push(buf);
-
-      chunkCount += 1;
-      totalBytes += buf.length;
 
       // 👇 logs didácticos
       /* console.log(
