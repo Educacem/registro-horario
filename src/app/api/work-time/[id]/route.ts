@@ -1,15 +1,15 @@
-// src/app/api/work-time/[id]/route.ts
+/* // src/app/api/work-time/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import checkApiKey from "@/helper/functions/functions";
 import {
   updateWorkerTime,
   deleteWorkerTime,
 } from "@/lib/workTime/workTime.services";
+import { requireAuth } from "@/lib/auth/requireAuth";
 type ParamsPromise = { params: Promise<{ id: string }> };
 
 export async function PUT(req: NextRequest, { params }: ParamsPromise) {
-  const auth = checkApiKey(req);
-  if (auth) return auth;
+  const auth = requireAuth(req);
+  if (!auth.ok) return auth.response;
 
   try {
     const { id } = await params;
@@ -52,8 +52,8 @@ export async function PUT(req: NextRequest, { params }: ParamsPromise) {
 }
 
 export async function DELETE(req: NextRequest, { params }: ParamsPromise) {
-  const auth = checkApiKey(req);
-  if (auth) return auth;
+  const auth = requireAuth(req);
+  if (!auth.ok) return auth.response;
 
   try {
     const parsedId = Number((await params).id);
@@ -73,3 +73,4 @@ export async function DELETE(req: NextRequest, { params }: ParamsPromise) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+ */

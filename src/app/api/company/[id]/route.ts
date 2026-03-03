@@ -1,4 +1,4 @@
-import checkApiKey from "@/helper/functions/functions";
+/* import { requireAuth } from "@/lib/auth/requireAuth";
 import {
   updateCompany,
   deleteCompany,
@@ -13,8 +13,8 @@ type RouteContext = {
 // PUT /api/company/:id
 export async function PUT(req: NextRequest, context: RouteContext) {
   try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
+    const auth = requireAuth(req);
+    if (!auth.ok) return auth.response;
     const { id } = await context.params;
     const companyId = Number(id);
     if (!companyId) {
@@ -48,14 +48,14 @@ export async function PUT(req: NextRequest, context: RouteContext) {
       error instanceof Error ? error.message : "Error updating company";
     return NextResponse.json({ error: message }, { status: 500 });
   }
-}
-
+} */
+/* 
 // DELETE /api/company/:id
 export async function DELETE(req: NextRequest, context: RouteContext) {
   {
     try {
-      const auth = checkApiKey(req);
-      if (auth) return auth;
+      const auth = requireAuth(req);
+      if (!auth.ok) return auth.response;
       const { id } = await context.params;
       const companyId = Number(id);
 
@@ -87,3 +87,4 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
     }
   }
 }
+ */

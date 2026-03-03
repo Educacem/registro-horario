@@ -1,4 +1,4 @@
-import checkApiKey from "@/helper/functions/functions";
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { findWorkerByDni } from "@/lib/workers/workers.services";
 import {
   createWorkerTime,
@@ -10,8 +10,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
+    const auth = requireAuth(req);
+    if (!auth.ok) return auth.response;
     const workersTime = await getAllWorkersTime();
     return NextResponse.json(workersTime, { status: 200 });
   } catch (error: unknown) {
@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { date, clockIn, clockOut, dni } = body;

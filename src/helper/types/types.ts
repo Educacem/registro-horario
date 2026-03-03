@@ -20,7 +20,7 @@ export type WorkTimeLike = {
 };
 
 export type ReportBodyByWorker = {
-  name: string;
+  dni: string;
   from?: string | undefined;
   to?: string | undefined;
 };

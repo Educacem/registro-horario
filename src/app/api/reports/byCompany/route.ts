@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import PDFDocument from "pdfkit";
 import { pdfDocToBuffer } from "@/helper/pdf/pdfBuffer";
-import checkApiKey, {
+import {
   drawKeyValue,
   drawSectionTitle,
   drawTableHeader,
@@ -25,6 +25,7 @@ import {
   WorkerLike,
   WorkTimeLike,
 } from "../../../../helper/types/types";
+import { requireAuth } from "@/lib/auth/requireAuth";
 export const runtime = "nodejs";
 
 /* export async function GET() {
@@ -51,8 +52,8 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
+    const auth = requireAuth(req);
+    if (!auth.ok) return auth.response;
 
     //We need to get the company id from the context params
     const body = (await req.json()) as ReportBody;
@@ -285,7 +286,7 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `inline; filename="report_company_${companyId}.pdf"`,
+        "Content-Disposition": `attachment; filename="report_company_${companyId}.pdf"`,
         "Cache-Control": "no-store",
       },
     });

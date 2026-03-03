@@ -1,12 +1,12 @@
 import { NextResponse, NextRequest } from "next/server";
-import checkApiKey from "@/helper/functions/functions";
 import { createCompany, getAllCompanys } from "@/lib/company/company.services";
+import { requireAuth } from "@/lib/auth/requireAuth";
 
 // GET /api/company
 export async function GET(req: NextRequest) {
   try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
+    const auth = requireAuth(req);
+    if (!auth.ok) return auth.response;
     const companys = await getAllCompanys();
     return NextResponse.json(companys, { status: 200 });
   } catch (error: unknown) {
@@ -18,9 +18,9 @@ export async function GET(req: NextRequest) {
 
 //Post /api/company
 export async function POST(req: NextRequest) {
+  const auth = requireAuth(req);
+  if (!auth.ok) return auth.response;
   try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
     const body = await req.json();
     const { name } = body;
     if (!name) {

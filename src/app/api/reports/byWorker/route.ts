@@ -1,4 +1,4 @@
-import checkApiKey, {
+import {
   drawKeyValue,
   drawSectionTitle,
   drawTableHeader,
@@ -15,7 +15,7 @@ import PDFDocument from "pdfkit";
 
 import { NextRequest, NextResponse } from "next/server";
 import { pdfDocToBuffer } from "@/helper/pdf/pdfBuffer";
-import { getWorkerByName } from "@/lib/workers/workers.services";
+import { findWorkerByDni } from "@/lib/workers/workers.services";
 import { getCompanyByWorkerId } from "@/lib/company/company.services";
 import {
   ReportBodyByWorker,
@@ -23,18 +23,20 @@ import {
   WorkTimeLike,
 } from "@/helper/types/types";
 import { getWorkerTimeByWorkerId } from "@/lib/workTime/workTime.services";
+import { requireAuth } from "@/lib/auth/requireAuth";
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const auth = checkApiKey(req);
-    if (auth) return auth;
+    const auth = requireAuth(req);
+    if (!auth.ok) return auth.response;
 
     const body = (await req.json()) as ReportBodyByWorker;
 
-    const workerName = parseToCorrectString(body.name);
-    if (!workerName) {
+    const workerDni = parseToCorrectString(body.dni);
+    if (!workerDni) {
       return NextResponse.json(
-        { error: "Invalid worker name" },
+        { error: "Invalid worker DNI" },
         { status: 400 },
       );
     }
@@ -44,7 +46,7 @@ export async function POST(req: NextRequest) {
     const doc = new PDFDocument({ size: "A4", margin: 50 });
 
     //Check if worker exists in the database
-    const worker = (await getWorkerByName(workerName)) as WorkerLike;
+    const worker = (await findWorkerByDni(workerDni)) as WorkerLike;
     if (!worker) {
       return NextResponse.json({ error: "Worker not found" }, { status: 404 });
     }
@@ -86,13 +88,13 @@ export async function POST(req: NextRequest) {
         `${fromDate ? formatDateOnly(fromDate) : "—"}  a  ${toDate ? formatDateOnly(toDate) : "—"}`,
       );
     }
-    const totalMs = sumDurations(workTimes);
+    const totalMs = sumDurations(filteredWorkTimes);
     drawKeyValue(doc, "Horas totales", `${formatDurationMs(totalMs)}`);
 
     // ========= Seccion trabajadores =========
     drawSectionTitle(doc, "Trabajador");
 
-    if (workTimes.length === 0) {
+    if (filteredWorkTimes.length === 0) {
       doc
         .font("Helvetica")
         .fontSize(11)
@@ -159,7 +161,7 @@ export async function POST(req: NextRequest) {
 
     let subtotalMs = 0;
 
-    for (const wt of workTimes) {
+    for (const wt of filteredWorkTimes) {
       y = ensureSpace(doc, y);
       const outText = wt.clockOut ? formatDateTime(wt.clockOut) : "EN CURSO";
 
@@ -211,7 +213,7 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",
-        "Content-Disposition": `inline; filename="report_by_worker_${workerName}.pdf"`,
+        "Content-Disposition": `attachment; filename="report_by_worker_${workerDni}.pdf"`,
         "Cache-Control": "no-store",
       },
     });
